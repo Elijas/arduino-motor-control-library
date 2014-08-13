@@ -18,6 +18,7 @@ void loop() {
         analogWrite(PIN_MOTOR_FWD, targetPower);
         Serial.println(targetPower);
     }
+    delay(1000);
 }
 
 int powerOfTen(int a) {
@@ -29,7 +30,7 @@ int readPosNumberFromSerial() {
     if (Serial.available()) {
         int number = 0;
         while (Serial.available() > 0) {
-            number += (Serial.read()-'0') * powerOfTen(Serial.available()-1);
+            number += (Serial.read()-'0') * powerOfTen(Serial.available());
         }
         return number;
     }
