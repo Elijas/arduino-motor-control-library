@@ -1,7 +1,6 @@
 #include <Timer.h>
 
 #define PIN_MOTOR_FWD 2
-#define PIN_MOTOR_BWD 3
 #define PIN_CURRENTCHECK_1 A3
 #define PIN_CURRENTCHECK_2 A4
 
