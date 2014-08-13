@@ -47,7 +47,6 @@ void updateMotors() {
 void setup() {
     Serial.begin(57600);
     pinMode(PIN_MOTOR_FWD, OUTPUT);
-    pinMode(PIN_MOTOR_BWD, OUTPUT);
     
     t.every(1000, readSerialInput);
     t.every(100, updateMotors);
