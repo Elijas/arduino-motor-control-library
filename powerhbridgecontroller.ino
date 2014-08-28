@@ -19,6 +19,7 @@ void readAnalogs() {
     int a1 = analogRead(PIN_CURRENTCHECK_1), a2 = analogRead(PIN_CURRENTCHECK_2);
     a1sum+=a1;
     a2sum+=a2;
+    
     /*
     Serial.print(currPower); 
     Serial.print(" "); 
@@ -47,11 +48,12 @@ void updateMotors() {
 void setup() {
     Serial.begin(57600);
     pinMode(PIN_MOTOR_FWD, OUTPUT);
+    pinMode(10, OUTPUT); // turns LCD backlight off
     
     t.every(1000, readSerialInput);
     t.every(100, updateMotors);
-    t.every(1, readAnalogs);
-    t.every(100, printSums);
+    //t.every(1, readAnalogs);
+    //t.every(100, printSums);
 }
 void loop() {t.update();}
 
