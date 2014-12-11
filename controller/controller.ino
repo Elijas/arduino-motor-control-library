@@ -1,13 +1,24 @@
 #include <Timer.h>
 
-#define PIN_MOTOR_FWD 13
-#define PIN_MOTOR_BWD 12
-#define PIN_CURRENTCHECK_1 A13
-#define PIN_CURRENTCHECK_2 A14
+#define PIN_MOTOR_FWD 5
+#define PIN_MOTOR_BWD 6
+#define PIN_CURRENTCHECK_1 A4
+#define PIN_CURRENTCHECK_2 A3
+#define SIZE_readingsArray 20 // used to filter out extremes and average the left-over values
 
 // TIMER
 Timer t;
 int TEID_readSerialInput, TEID_hbupdate, TEID_hbreadAnalogs; //TimerEventIDs
+
+// QUICK HELPER FUNCTIONS
+static __inline__ int sort(int *d){
+    int i, j;
+    for (i = 1; i < SIZE_readingsArray; i++) {
+        int tmp = d[i];
+        for (j = i; j >= 1 && tmp < d[j-1]; j--) d[j] = d[j-1];
+        d[j] = tmp;
+    }
+}
 
 // HBRIDGE
 namespace hb {
@@ -59,17 +70,30 @@ namespace hb {
         }
     }
     
+    int readingsArray[SIZE_readingsArray];
     int outputNo = 0;
+    int readNo = 0;
     void readAnalogs() {
-        int analogVal = analogRead(PIN_CURRENTCHECK_1);
+        readingsArray[readNo] = analogRead(PIN_CURRENTCHECK_1) - analogRead(PIN_CURRENTCHECK_2);
         //if (analogVal > 300) Serial.print("!"), blowFuse();
-      
-        if (++outputNo > 20) {
-            outputNo = 0;
-            Serial.print("\n");
+        if (++readNo > SIZE_readingsArray) {
+            readNo = 0;
+            
+            sort(readingsArray);
+            
+            int mean_readingsArray = 0;
+            for (int i=2; i<SIZE_readingsArray-2; i++) {
+                mean_readingsArray += readingsArray[i];
+            }
+            mean_readingsArray /= SIZE_readingsArray-4;
+            
+            if (++outputNo > 45) {
+                outputNo = 0;
+                Serial.print("\n");
+            }
+            Serial.print(mean_readingsArray);
+            Serial.print(" ");
         }
-        Serial.print(analogVal);
-        Serial.print(" ");
     }
 }
 
@@ -92,15 +116,15 @@ void readSerialInput() {
 }
 
 void setup() {
-    Serial.begin(57600);
+    Serial.begin(115200);
     pinMode(PIN_MOTOR_FWD, OUTPUT);
     pinMode(PIN_MOTOR_BWD, OUTPUT);
     pinMode(10, OUTPUT);//for LCD display
     
-    hb::setup(40,240);
+    hb::setup(25,240);
     
     TEID_readSerialInput = t.every(1000, readSerialInput);
     TEID_hbupdate = t.every(100, hb::update);
-    TEID_hbreadAnalogs = t.every(200, hb::readAnalogs);
+    TEID_hbreadAnalogs = t.every(99, hb::readAnalogs);
 }
 void loop() {t.update();}
