@@ -1,40 +1,36 @@
 // (c) Author: Elijas (2015) github.com/Elijas
 #include <Timer.h>
 #include "Motor.h"
-Timer timer;
-
 
 #define PIN_FORWARD         2
 #define PIN_BACKWARD        3  
-#define LOWER_LIMIT         80   /MOTOR_POWER_STEPSIZE //integers from 0 to 255 (255 means 100% PWM duty cycle)
-#define UPPER_LIMIT         170  /MOTOR_POWER_STEPSIZE
+#define LOWER_LIMIT         80   /STEP_SIZE //integers from 0 to 255 (255 means 100% PWM duty cycle)
+#define UPPER_LIMIT         170  /STEP_SIZE
 #define STEP_SIZE           5       //integer
 #define DELAY_STEP_UPDATE   30      //ms
-Motor motor(
-    PIN_FORWARD,
-    PIN_BACKWARD,
-    LOWER_LIMIT,
-    UPPER_LIMIT,
-    STEP_SIZE,
-    DELAY_STEP_UPDATE
-);
-
+Timer timer;
+Motor motor(PIN_FORWARD,
+            PIN_BACKWARD,
+            LOWER_LIMIT,
+            UPPER_LIMIT,
+            STEP_SIZE,
+            DELAY_STEP_UPDATE);
 
 void Example1() {
-    leftMotor.set(100);
+    motor.set(100);
 }
 void Example2() {
-    leftMotor.set(-100);
+    motor.set(-100);
 }
 void Example3() {
-    leftMotor.set(0);
+    motor.set(0);
 }
-
 
 void setup() {
     //temp
     pinMode(10, OUTPUT);
     Serial.begin(9600);
+    ///temp
 
     timer.after(0,    Example1);
     timer.after(2000, Example2);
