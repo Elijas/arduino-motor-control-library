@@ -10,21 +10,21 @@
 #define DELAY_STEP_UPDATE   30      //ms
 Timer timer;
 
-Motor motor0(PIN_FORWARD,
+Motor motor0(0,PIN_FORWARD,
             PIN_BACKWARD,
             LOWER_LIMIT,
             UPPER_LIMIT,
             STEP_SIZE,
             DELAY_STEP_UPDATE,
-            &timer,0
+            &timer
             );
-Motor motor1(PIN_FORWARD,
+Motor motor1(1,PIN_FORWARD,
             PIN_BACKWARD,
             LOWER_LIMIT,
             UPPER_LIMIT,
             STEP_SIZE,
             DELAY_STEP_UPDATE,
-            &timer,1
+            &timer
             );
 
 void Example1() {

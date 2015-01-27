@@ -1,4 +1,5 @@
 // (c) Author: Elijas (2015) // github.com/Elijas //
+
 #ifndef WHEEL
 #define WHEEL
 #include <Arduino.h>
@@ -13,7 +14,7 @@ class Motor {
               stepSize;
 
     public:
-    Motor(int,int,int,int,int,int,Timer*,int);
+    Motor(int,int,int,int,int,int,int,Timer*);
     void set(int);
     void updatePin();
     
@@ -21,33 +22,34 @@ class Motor {
     void pinWrite(int);
 
     //Necessary to pass to pass updatePin() function as Timer callback function
-    static Motor* static_ptr_motor;
-    static Motor* static_ptr_motor2;
-    static void static_updatePin();
-    static void static_updatePin2();
+    static void updatePin_motor0();
+    static Motor* ptr_motor0;
+
+    static void updatePin_motor1();
+    static Motor* ptr_motor1;
 };
 
-Motor* Motor::static_ptr_motor;
-Motor* Motor::static_ptr_motor2;
+Motor* Motor::ptr_motor0;
+Motor* Motor::ptr_motor1;
 
-Motor::Motor (int arg_pinForward, int arg_pinBackward, int arg_lowerLimit, 
-              int arg_upperLimit, int arg_stepSize, 
-              int delayStepUpdate, Timer* ptr_timer, int motorID)
-  : currStep     (0),
-    targetStep   (0),
-    pinForward   (arg_pinForward),
-    pinBackward  (arg_pinBackward),
-    lowerLimit   (arg_lowerLimit),
-    upperLimit   (arg_upperLimit),
-    stepSize     (arg_stepSize) 
+Motor::Motor (int motorID, int set_pinForward, int set_pinBackward,
+              int set_lowerLimit, int set_upperLimit, int set_stepSize,
+              int delayOfStepUpdate, Timer* t
+              ) : currStep     (0),
+                  targetStep   (0),
+                  pinForward   (set_pinForward),
+                  pinBackward  (set_pinBackward),
+                  lowerLimit   (set_lowerLimit),
+                  upperLimit   (set_upperLimit),
+                  stepSize     (set_stepSize)
 {
-    if (motorID==0) {
-        static_ptr_motor = this;
-        ptr_timer -> every(delayStepUpdate, Motor::static_updatePin);
+    if (motorID == 0) {
+        ptr_motor0 = this;
+        t -> every(delayOfStepUpdate, Motor::updatePin_motor0);
     }
-    else if (motorID==1) {
-        static_ptr_motor2 = this;
-        ptr_timer -> every(delayStepUpdate, Motor::static_updatePin2);
+    else if (motorID == 1) {
+        ptr_motor1 = this;
+        t -> every(delayOfStepUpdate, Motor::updatePin_motor1);
     }
 }
 
@@ -84,11 +86,11 @@ void Motor::pinWrite(int power) {
     //</TEMPORARY>
 }
 
-void Motor::static_updatePin() {
-    Motor::static_ptr_motor -> updatePin();
+void Motor::updatePin_motor0() {
+    Motor::ptr_motor0 -> updatePin();
 }
-void Motor::static_updatePin2() {
-    Motor::static_ptr_motor2 -> updatePin();
+void Motor::updatePin_motor1() {
+    Motor::ptr_motor1 -> updatePin();
 }
 #endif
 
