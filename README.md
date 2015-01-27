@@ -1,6 +1,5 @@
 # Description:
-This is an arduino library for gradually increasing/decreasing DC motor power. It is meant to replace analogWrite() when controlling motors.
-
+This is an arduino library that allows the power given to motors increase/decrease gradually (and not instantaneously as with analogWrite() function which this library is meant to replace).
 # Features:
  - Lower and upper power limits (e.g. for motors that are able spin only when PWM duty cycle is above some threshold, (i.e. when the value is big enough in analogWrite(pin,value)))
  - Adjustable rate of power change (by changing step size and/or update delay)
