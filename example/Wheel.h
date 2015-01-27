@@ -13,7 +13,7 @@ class Motor {
               stepSize;
 
     public:
-    Motor(int,int,int,int,int,int,Timer*);
+    Motor(int,int,int,int,int,int,Timer*,int);
     void set(int);
     void updatePin();
     
@@ -22,13 +22,17 @@ class Motor {
 
     //Necessary to pass to pass updatePin() function as Timer callback function
     static Motor* static_ptr_motor;
+    static Motor* static_ptr_motor2;
     static void static_updatePin();
+    static void static_updatePin2();
 };
 
 Motor* Motor::static_ptr_motor;
+Motor* Motor::static_ptr_motor2;
 
 Motor::Motor (int arg_pinForward, int arg_pinBackward, int arg_lowerLimit, 
-              int arg_upperLimit, int arg_stepSize, int delayStepUpdate, Timer* ptr_timer)
+              int arg_upperLimit, int arg_stepSize, 
+              int delayStepUpdate, Timer* ptr_timer, int motorID)
   : currStep     (0),
     targetStep   (0),
     pinForward   (arg_pinForward),
@@ -37,8 +41,14 @@ Motor::Motor (int arg_pinForward, int arg_pinBackward, int arg_lowerLimit,
     upperLimit   (arg_upperLimit),
     stepSize     (arg_stepSize) 
 {
-    static_ptr_motor = this;
-    ptr_timer -> every(delayStepUpdate, Motor::static_updatePin);
+    if (motorID==0) {
+        static_ptr_motor = this;
+        ptr_timer -> every(delayStepUpdate, Motor::static_updatePin);
+    }
+    else if (motorID==1) {
+        static_ptr_motor2 = this;
+        ptr_timer -> every(delayStepUpdate, Motor::static_updatePin2);
+    }
 }
 
 void Motor::set(int power) {
@@ -76,6 +86,9 @@ void Motor::pinWrite(int power) {
 
 void Motor::static_updatePin() {
     Motor::static_ptr_motor -> updatePin();
+}
+void Motor::static_updatePin2() {
+    Motor::static_ptr_motor2 -> updatePin();
 }
 #endif
 
