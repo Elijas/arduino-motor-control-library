@@ -1,68 +1,72 @@
-// (c) Elijas 2015 | github.com/Elijas
+// (c) Author: Elijas (2015) github.com/Elijas
 #ifndef WHEEL
 #define WHEEL
-
 #include <Arduino.h>
-#include "Options.h"
 
-struct Motor {
-    int currStep, targetStep; //Power "steps". Actual power outputted is currStep*MOTOR_POWER_STEPSIZE
-    int pinFwd, pinBwd;    
-    int powerLimit[2]; //lower power limit indexed 0, and upper limit 1
-    Motor() : currStep(0), targetStep(0){}
+class Motor {
+    int pinForward,
+        pinBackward,
+        lowerLimit,
+        upperLimit,
+        stepSize,
+        delayStepUpdate;
     
-    struct Option {
-        int pinFwd;
-        int pinBwd;
-        // Optional:
-        int lowerPowerLimit;
-        int upperPowerLimit;
-        int powerStepSize;
-        int powerDelayStepUpdate;    
-        Motor() : lowerPowerLimit(0), upperPowerLimit(255), powerStepSize(1), powerDelayStepUpdat(30){}
-    }
+    public:
+    Motor(int,int,int,int,int,int);
+    set(int);
+    updatePin();
+    
+    private:
+    pinWrite(int);
+}
 
-    void init(int pinMotorFwd, int pinMotorBwd, int motorLowerPowerLimit, int motorUpperPowerLimit) {
-        pinFwd = pinMotorFwd;
-        pinBwd = pinMotorBwd;
-        powerLimit[0] = motorLowerPowerLimit;
-        powerLimit[1] = motorUpperPowerLimit;
-    }
+Motor::Motor (int arg_pinForward,int arg_pinBackward,int arg_lowerLimit,int arg_upperLimit,int arg_stepSize,int arg_delayStepUpdate) {
+    pinForward      = arg_pinForward;
+    pinBackward     = arg_pinBackward;
+    lowerLimit      = arg_lowerLimit;
+    upperLimit      = arg_upperLimit;
+    stepSize        = arg_stepSize;
+    delayStepUpdate = arg_delayStepUpdate;
+}
 
-    void setPower(int p) {
-        p = p / MOTOR_POWER_STEPSIZE;
-
-        if (p > 0) {
-            if      (p < powerLimit[0]) targetStep = 0;
-            else if (p > powerLimit[1]) targetStep = powerLimit[1];
-            else targetStep = p;
-        }
-        else {
-            if      (p > -powerLimit[0]) targetStep = 0;
-            else if (p < -powerLimit[1]) targetStep = powerLimit[1];
-            else targetStep = p;
-        }      
+void Motor::set(int power) {
+    step = power / stepSize;
+    
+    if (step > 0) {
+        if      (step < lowerLimit) 
+            targetStep = 0;
+        else if (step > upperLimit) 
+            targetStep = upperLimit;
+        else 
+            targetStep = step;
     }
+    else {
+        if      (step > -lowerLimit)
+            targetStep = 0;
+        else if (step < -upperLimit)
+            targetStep = upperLimit;
+        else
+            targetStep = step;
+    }      
+}
 
-    void pinWrite(int power) {
-        #ifndef DEBUG
-        if (power >= 0) analogWrite(pinFwd, power);
-        else            analogWrite(pinBwd, -power);
-        #else
-        if (power >= 0) Serial.println(power*MOTOR_POWER_STEPSIZE);
-        else            Serial.println(power*MOTOR_POWER_STEPSIZE);
-        #endif
-    }
+void Motor::updatePin() {
+    if      (currStep == 0           &&  currStep < targetStep) pinWrite(currStep = lowerLimit);
+    else if (currStep == 0           &&  currStep > targetStep) pinWrite(currStep = -lowerLimit);
+    else if (currStep == lowerLimit  &&  currStep > targetStep) pinWrite(currStep = 0);
+    else if (currStep == -lowerLimit &&  currStep < targetStep) pinWrite(currStep = 0);
+    else if (currStep < targetStep) pinWrite(++currStep);
+    else if (currStep > targetStep) pinWrite(--currStep);
+}
 
-    void update() {
-        //Jumps through gap of value between 0 and lower power limit or vice versa
-        if      (currStep == 0              &&  currStep < targetStep) pinWrite(currStep = powerLimit[0]);
-        else if (currStep == 0              &&  currStep > targetStep) pinWrite(currStep = -powerLimit[0]);
-        else if (currStep == powerLimit[0]  &&  currStep > targetStep) pinWrite(currStep = 0);
-        else if (currStep == -powerLimit[0] &&  currStep < targetStep) pinWrite(currStep = 0);
-        else if (currStep < targetStep) pinWrite(++currStep);
-        else if (currStep > targetStep) pinWrite(--currStep);
-    }
-};
+void Motor::pinWrite(int power) {
+    #if 0
+    if (power >= 0) analogWrite(pinFwd, power);
+    else            analogWrite(pinBwd, -power);
+    #else
+    if (power >= 0) Serial.println(power*MOTOR_POWER_STEPSIZE);
+    else            Serial.println(power*MOTOR_POWER_STEPSIZE);
+    #endif
+}
 #endif
 
