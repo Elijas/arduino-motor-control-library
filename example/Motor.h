@@ -1,7 +1,16 @@
 // (c) Author: Elijas (2015) // github.com/Elijas //
+// v1.0
+//
+// # Description:
+// This is an arduino library for gradually increasing/decreasing DC motor power. It is meant to replace analogWrite() when controlling motors.
+//
+// # Features:
+// - Lower and upper power limits (e.g. for motors that are able spin only when PWM duty cycle is above some threshold, (i.e. when the value is big enough in analogWrite(pin,value)))
+// - Adjustable rate of power change (by changing step size and/or update delay)
+// - Any number of motors (currently two are supported, modify header to allow for more)
 
-#ifndef WHEEL
-#define WHEEL
+#ifndef MOTOR
+#define MOTOR
 #include <Arduino.h>
 #include <Timer.h>
 
@@ -78,12 +87,13 @@ void Motor::updatePin() {
 }
 
 void Motor::pinWrite(int power) {
-    //if (power >= 0) analogWrite(pinFwd, power*stepSize);
-    //else            analogWrite(pinBwd, -power*stepSize);
-    //<TEMPORARY>
-    if (power >= 0) Serial.println(power*stepSize);
-    else            Serial.println(power*stepSize);
-    //</TEMPORARY>
+    if      (power > 0) analogWrite(pinForward, power*stepSize);
+    else if (power < 0) analogWrite(pinBackward, -power*stepSize);
+    else {
+        analogWrite(pinForward, 0)
+        analogWrite(pinBackward, 0)
+    }
+    //Serial.print("pin "), Serial.print(pinForward), Serial.print(": "), Serial.print(power>0?power*stepSize:0), Serial.print(" "), Serial.print("pin "), Serial.print(pinBackward), Serial.print(": "), Serial.println(power<0?-power*stepSize:0);
 }
 
 void Motor::updatePin_motor0() {
