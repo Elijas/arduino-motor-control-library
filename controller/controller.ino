@@ -61,17 +61,26 @@ void loop() {timer.update();}
 
 
 
-class RotaryEncoder { public: RotaryEncoder(uint8_t PinA, uint8_t PinB); void updateEncoder();
+class RotaryEncoder { 
 
-private: static RotaryEncoder* sEncoder; static void updateEncoderISR(); };
+public:
+RotaryEncoder(uint8_t PinA, uint8_t PinB); 
+void updateEncoder();
+
+private: 
+static RotaryEncoder* sEncoder; 
+static void updateEncoderISR(); 
+
+};
 
 
 RotaryEncoder* RotaryEncoder::sEncoder = 0;
 
 RotaryEncoder::RotaryEncoder(uint8_t PinA, uint8_t PinB) { ... 
-sEncoder = this; 
-attachInterrupt(0, RotaryEncoder::updateEncoderISR, CHANGE); 
-attachInterrupt(1, RotaryEncoder::updateEncoderISR, CHANGE); }
+    sEncoder = this; 
+    attachInterrupt(0, RotaryEncoder::updateEncoderISR, CHANGE); 
+    attachInterrupt(1, RotaryEncoder::updateEncoderISR, CHANGE); 
+}
 
 
 

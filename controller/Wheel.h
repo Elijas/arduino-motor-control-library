@@ -9,12 +9,10 @@ class Motor {
         pinBackward,
         lowerLimit,
         upperLimit,
-        stepSize,
-        delayStepUpdate;
-    Timer* ptr_timer;
+        stepSize;
     
     public:
-    Motor(int,int,int,int,int,int);
+    Motor(int,int,int,int,int,int,Timer*);
     set(int);
     updatePin();
     
@@ -22,13 +20,21 @@ class Motor {
     pinWrite(int);
 }
 
-Motor::Motor (int arg_pinForward,int arg_pinBackward,int arg_lowerLimit,int arg_upperLimit,int arg_stepSize,int arg_delayStepUpdate) {
+Motor::Motor (int arg_pinForward,
+              int arg_pinBackward,
+              int arg_lowerLimit,
+              int arg_upperLimit,
+              int arg_stepSize,
+              int delayStepUpdate,
+              Timer* ptr_timer
+              ){
     pinForward      = arg_pinForward;
     pinBackward     = arg_pinBackward;
     lowerLimit      = arg_lowerLimit;
     upperLimit      = arg_upperLimit;
     stepSize        = arg_stepSize;
-    delayStepUpdate = arg_delayStepUpdate;
+    
+    ptr_timer -> every(delayStepUpdate, FUNCTION);
 }
 
 void Motor::set(int power) {
