@@ -90,8 +90,8 @@ void Motor::pinWrite(int power) {
     if      (power > 0) analogWrite(pinForward, power*stepSize);
     else if (power < 0) analogWrite(pinBackward, -power*stepSize);
     else {
-        analogWrite(pinForward, 0)
-        analogWrite(pinBackward, 0)
+        analogWrite(pinForward, 0);
+        analogWrite(pinBackward, 0);
     }
     //Serial.print("pin "), Serial.print(pinForward), Serial.print(": "), Serial.print(power>0?power*stepSize:0), Serial.print(" "), Serial.print("pin "), Serial.print(pinBackward), Serial.print(": "), Serial.println(power<0?-power*stepSize:0);
 }
