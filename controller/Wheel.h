@@ -2,6 +2,7 @@
 #ifndef WHEEL
 #define WHEEL
 #include <Arduino.h>
+#include <Timer.h>
 
 class Motor {
     int pinForward,
@@ -10,6 +11,7 @@ class Motor {
         upperLimit,
         stepSize,
         delayStepUpdate;
+    Timer* ptr_timer;
     
     public:
     Motor(int,int,int,int,int,int);
