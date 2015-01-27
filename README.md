@@ -1,2 +1,2 @@
-# wheel-controller
-Arduino library for controlling a wheel
+# arduino-motor-control-library
+Arduino library to gradually change speed of a DC wheel
