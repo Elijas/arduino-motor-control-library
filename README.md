@@ -10,9 +10,9 @@ This is an arduino library for gradually increasing/decreasing DC motor power. I
 ```
 Timer timer;
 Motor myMotor(0, 2, 3, 0, 255, 1, 30, &timer);
-myMotor.set(255)`
+myMotor.set(255)
 ```
-(see Example code for details)
+(see example code for details)
 
 (NB: It is necessary for [Timer](http://playground.arduino.cc/Code/Timer) library to be [added](http://arduino.cc/en/Guide/Libraries) to arduino)
 
