@@ -5,17 +5,23 @@
 #include <Arduino.h>
 #include "Options.h"
 
-struct Encoder {
-    volatile int tickCount;
-    Encoder() : tickCount(0){} //set variable default initialization values
-};
-
 struct Motor {
     int currStep, targetStep; //Power "steps". Actual power outputted is currStep*MOTOR_POWER_STEPSIZE
     int pinFwd, pinBwd;    
     int powerLimit[2]; //lower power limit indexed 0, and upper limit 1
     Motor() : currStep(0), targetStep(0){}
     
+    struct Option {
+        int pinFwd;
+        int pinBwd;
+        // Optional:
+        int lowerPowerLimit;
+        int upperPowerLimit;
+        int powerStepSize;
+        int powerDelayStepUpdate;    
+        Motor() : lowerPowerLimit(0), upperPowerLimit(255), powerStepSize(1), powerDelayStepUpdat(30){}
+    }
+
     void init(int pinMotorFwd, int pinMotorBwd, int motorLowerPowerLimit, int motorUpperPowerLimit) {
         pinFwd = pinMotorFwd;
         pinBwd = pinMotorBwd;
@@ -56,15 +62,6 @@ struct Motor {
         else if (currStep == -powerLimit[0] &&  currStep < targetStep) pinWrite(currStep = 0);
         else if (currStep < targetStep) pinWrite(++currStep);
         else if (currStep > targetStep) pinWrite(--currStep);
-    }
-};
-
-struct Wheel {
-    Encoder encoder;
-    Motor motor;
-
-    Wheel(int pinMotorFwd, int pinMotorBwd, int motorLowerPowerLimit, int motorUpperPowerLimit) {
-        motor.init(pinMotorFwd, pinMotorBwd, motorLowerPowerLimit, motorUpperPowerLimit);
     }
 };
 #endif
