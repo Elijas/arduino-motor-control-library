@@ -14,7 +14,8 @@ Motor motor(PIN_FORWARD,
             LOWER_LIMIT,
             UPPER_LIMIT,
             STEP_SIZE,
-            DELAY_STEP_UPDATE);
+            DELAY_STEP_UPDATE
+            );
 
 void Example1() {
     motor.set(100);
