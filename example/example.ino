@@ -19,7 +19,7 @@ Motor motor0(0, MOTOR0_FWD_PIN, MOTOR0_BWD_PIN, LOWER_LIMIT, UPPER_LIMIT, STEP_S
 //Motor motor1(1, MOTOR1_FWD_PIN, MOTOR1_BWD_PIN, LOWER_LIMIT, UPPER_LIMIT, STEP_SIZE, DELAY_STEP_UPDATE, &timer);
 
 void Example_step1() {
-    motor0.set(30); // Sets power for motors. Argument range: integers from 0 to 255 (represents PWM duty cycle)
+    motor0.set(30); // Sets power for motors. Integer in range [-255;255], sign means direction, number represents PWM duty cycle (255 is 100%)
 }
 void Example_step2() {
     motor0.set(-20);
